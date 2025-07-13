@@ -2,7 +2,7 @@ import { Formik } from "formik";
 import { Col, Form, InputGroup, Row } from "react-bootstrap";
 import { memo } from "react";
 import { FormikConfig } from "formik/dist/types";
-import { useGetGroupsQuery } from "src/redux/contacts";
+import { store } from "src/store";
 
 export interface FilterFormValues {
   name: string;
@@ -11,7 +11,7 @@ export interface FilterFormValues {
 
 export const FilterForm = memo<FormikConfig<Partial<FilterFormValues>>>(
   ({ onSubmit, initialValues = {} }) => {
-    const { data: groups = [], isLoading: groupsLoading } = useGetGroupsQuery();
+    const { groups, groupsLoading } = store;
 
     return (
       <Formik initialValues={initialValues} onSubmit={onSubmit}>

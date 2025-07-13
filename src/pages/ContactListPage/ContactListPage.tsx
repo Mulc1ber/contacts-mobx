@@ -1,4 +1,5 @@
-import { memo, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { observer } from "mobx-react-lite";
 import { Col, Row } from "react-bootstrap";
 import {
   ContactCard,
@@ -6,54 +7,23 @@ import {
   FilterFormValues,
   Loader,
 } from "src/components";
-import { ContactDto } from "src/types/dto/ContactDto";
-import { useGetContactsQuery, useGetGroupsQuery } from "src/redux/contacts";
+import { store } from "src/store";
 
-export const ContactListPage = memo(() => {
-  const { data: contacts = [], isLoading: contactsLoading } =
-    useGetContactsQuery();
-  const { data: groups = [], isLoading: groupsLoading } = useGetGroupsQuery();
+export const ContactListPage = observer(() => {
+  const { filteredContacts, contactsLoading, groupsLoading, setFilterParams } =
+    store;
 
-  const [filteredContacts, setFilteredContacts] = useState<ContactDto[]>([]);
-
-  const onSubmit = (fv: Partial<FilterFormValues>) => {
-    let findContacts = [...contacts];
-
-    if (fv.name) {
-      const fvName = fv.name.toLowerCase();
-      findContacts = findContacts.filter(({ name }) =>
-        name.toLowerCase().includes(fvName)
-      );
-    }
-
-    if (fv.groupId) {
-      const groupContacts = groups.find(({ id }) => id === fv.groupId);
-
-      if (groupContacts) {
-        findContacts = findContacts.filter(({ id }) =>
-          groupContacts.contactIds.includes(id)
-        );
-      }
-    }
-
-    setFilteredContacts(findContacts);
-  };
-
-  useEffect(() => {
-    console.log("filteredContacts", filteredContacts);
-    console.log("contacts", contacts);
-
-    console.log(filteredContacts.length === 0);
-
-    if (filteredContacts.length === 0 && contacts.length > 0) {
-      setFilteredContacts(contacts);
-    }
-  }, [contacts]);
+  const handleSubmit = useCallback(
+    (fv: Partial<FilterFormValues>) => {
+      setFilterParams(fv);
+    },
+    [setFilterParams]
+  );
 
   return (
     <Row xxl={1}>
       <Col className="mb-3">
-        <FilterForm initialValues={{}} onSubmit={onSubmit} />
+        <FilterForm initialValues={{}} onSubmit={handleSubmit} />
       </Col>
       <Col>
         {contactsLoading || groupsLoading ? (

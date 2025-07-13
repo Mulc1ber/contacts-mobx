@@ -1,20 +1,17 @@
-import React, { memo } from "react";
+import { observer } from "mobx-react-lite";
 import { Col, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { ContactCard, Empty, GroupContactsCard, Loader } from "src/components";
-import { useGetContactsQuery, useGetGroupsQuery } from "src/redux/contacts";
+import { store } from "src/store";
 
-export const GroupPage = memo(() => {
+export const GroupPage = observer(() => {
   const { groupId } = useParams<{ groupId: string }>();
+  const { getGroupContacts, groupsLoading, contactsLoading, groups } = store;
 
-  const { data: contacts = [], isLoading: contactsLoading } =
-    useGetContactsQuery();
-  const { data: groups = [], isLoading: groupsLoading } = useGetGroupsQuery();
+  if (!groups.length || !groupId) return <Empty />;
 
   const currentGroup = groups.find(({ id }) => id === groupId);
-  const groupContactsList = currentGroup
-    ? contacts.filter(({ id }) => currentGroup.contactIds.includes(id))
-    : [];
+  const groupContactsList = groupId ? getGroupContacts(groupId) : [];
 
   return (
     <Row className="g-4">

@@ -1,12 +1,12 @@
-import React from "react";
+import React, { createContext } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
 import { MainApp } from "./apps/MainApp";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "react-bootstrap";
-import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { store } from "./store";
+export const StoreContext = createContext(store);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -17,11 +17,11 @@ root.render(
       breakpoints={["xxxl", "xxl", "xl", "lg", "md", "sm", "xs", "xxs"]}
       minBreakpoint="xxs"
     >
-      <Provider store={store}>
+      <StoreContext.Provider value={store}>
         <BrowserRouter>
           <MainApp />
         </BrowserRouter>
-      </Provider>
+      </StoreContext.Provider>
     </ThemeProvider>
   </React.StrictMode>
 );
