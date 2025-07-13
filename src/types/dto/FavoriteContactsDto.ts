@@ -1,1 +1,1 @@
-export type FavoriteContactsDto = string;
+export type FavoriteContactsDto = string[];

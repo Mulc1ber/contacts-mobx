@@ -1,18 +1,10 @@
-import { memo } from "react";
+import { observer } from "mobx-react-lite";
 import { Col, Row } from "react-bootstrap";
 import { ContactCard, Loader } from "src/components";
-import { useGetContactsQuery, useGetFavoritesQuery } from "src/redux/contacts";
+import { store } from "src/store";
 
-export const FavoritListPage = memo(() => {
-  const { data: contacts = [], isLoading: contactsLoading } =
-    useGetContactsQuery();
-  const { data: favorites = [], isLoading: favoritesLoading } =
-    useGetFavoritesQuery();
-
-  const favoriteContacts = contacts.filter((contact) =>
-    favorites.includes(contact.id)
-  );
-
+export const FavoritListPage = observer(() => {
+  const { favoriteContacts, contactsLoading, favoritesLoading } = store;
   return (
     <Row xxl={4} className="g-4">
       {contactsLoading || favoritesLoading ? (
